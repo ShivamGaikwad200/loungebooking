@@ -163,7 +163,7 @@ export const bookingColumns = [
   },
   {
     field: "occasion",
-    headerName: "Ocassion",
+    headerName: "Occassion",
     width: 130,
   },
   {

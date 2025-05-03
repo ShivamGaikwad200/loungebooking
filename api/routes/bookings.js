@@ -34,4 +34,19 @@ router.get("/", verifyAdmin, getAllBookings);
 // Delete a booking (user themselves or admin)
 router.delete("/:id", verifyUser, deleteBooking);
 
+router.get("/booked-dates/:loungeId", async (req, res) => {
+  try {
+    const bookings = await Booking.find({ loungeId: req.params.loungeId });
+
+    const bookedRanges = bookings.map((booking) => ({
+      start: booking.startDate,
+      end: booking.endDate,
+    }));
+
+    res.status(200).json(bookedRanges);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch booked dates" });
+  }
+});
+
 export default router;

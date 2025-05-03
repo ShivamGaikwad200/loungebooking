@@ -19,7 +19,7 @@ const router=express.Router();
 // })
 
 // Create
-// router.post("/", createUser);
+//router.post("/", createUser);
 
 //Update
 router.put("/:id",verifyUser, updateUser)

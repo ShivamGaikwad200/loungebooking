@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 
 const FeaturedLounges = () => {
   const { data, loading, error } = useFetch("/lounges?featured=true&limit=3");
-  console.log(data);
+  // console.log(data);
   const navigate = useNavigate();
 
   const handleClick = (id) => {

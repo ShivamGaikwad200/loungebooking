@@ -1,10 +1,14 @@
 import "./bookingPage.css";
 import Navbar from "../../components/navbar/Navbar";
 import Footer from "../../components/footer/Footer";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
+import { isWithinInterval } from "date-fns";
+import { eachDayOfInterval } from "date-fns";
 
 const BookingPage = () => {
   const { user } = useContext(AuthContext);
@@ -14,14 +18,48 @@ const BookingPage = () => {
   const totalPrice = location.state?.totalPrice;
 
   const [services, setServices] = useState([]);
-  const [bookingDate, setBookingDate] = useState("");
-  const [timeSlot, setTimeSlot] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [bookedDates, setBookedDates] = useState([]);
   const [occasion, setOccasion] = useState("");
   const [generatorBackup, setGeneratorBackup] = useState("No");
   const [additionalFurniture, setAdditionalFurniture] = useState("No");
   const [additionalLighting, setAdditionalLighting] = useState("No");
   const [additionalWaiters, setAdditionalWaiters] = useState("No");
   const [catering, setCatering] = useState("OI");
+
+  useEffect(() => {
+    const fetchBookedDates = async () => {
+      try {
+        const res = await axios.get(`/bookings/booked-dates/${loungeId}`);
+        const ranges = res.data;
+        const allBookedDates = [];
+
+        ranges.forEach(({ start, end }) => {
+          const interval = eachDayOfInterval({
+            start: new Date(start),
+            end: new Date(end),
+          });
+          allBookedDates.push(...interval);
+        });
+
+        setBookedDates(allBookedDates);
+      } catch (err) {
+        console.error("Error fetching booked dates:", err);
+      }
+    };
+
+    if (loungeId) fetchBookedDates();
+  }, [loungeId]);
+
+  // Function to check if a date is blocked
+  const isDateBlocked = (date) => {
+    return bookedDates.some((bookedDate) => 
+      bookedDate.getDate() === date.getDate() && 
+      bookedDate.getMonth() === date.getMonth() &&
+      bookedDate.getFullYear() === date.getFullYear()
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,8 +68,8 @@ const BookingPage = () => {
         userId: user._id,
         loungeId,
         services,
-        bookingDate,
-        timeSlot,
+        startDate,
+        endDate,
         totalPrice,
         occasion,
         generatorBackup,
@@ -45,8 +83,16 @@ const BookingPage = () => {
       alert("Booking successfully created!");
       navigate("/");
     } catch (err) {
-      console.error(err);
-      alert("Booking failed.");
+      if (
+        err.response &&
+        err.response.status === 400 &&
+        err.response.data.message === "This lounge is already booked during the selected dates."
+      ) {
+        alert("Booking failed: Selected dates are already booked for this lounge.");
+      } else {
+        console.error(err);
+        alert("Booking failed. Please try again.");
+      }
     }
   };
 
@@ -65,22 +111,31 @@ const BookingPage = () => {
         <h1>Book Your Lounge</h1>
         <form onSubmit={handleSubmit} className="bookingForm">
           <div>
-            <label>Booking Date:</label>
-            <input
-              type="date"
-              value={bookingDate}
-              onChange={(e) => setBookingDate(e.target.value)}
+            <label>Booking Start Date:</label>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              filterDate={(date) => !isDateBlocked(date)} // Disable dates in bookedDates array
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="Select Start Date"
               required
+              minDate={new Date()} // Prevent selecting past dates
             />
           </div>
 
           <div>
-            <label>Time Slot:</label>
-            <input
-              type="text"
-              placeholder="e.g. 6:00 PM - 9:00 PM"
-              value={timeSlot}
-              onChange={(e) => setTimeSlot(e.target.value)}
+            <label>Booking End Date:</label>
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              filterDate={(date) => !isDateBlocked(date)} // Disable dates in bookedDates array
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              placeholderText="Select End Date"
               required
             />
           </div>

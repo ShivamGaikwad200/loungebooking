@@ -14,14 +14,15 @@ const BookingSchema = new mongoose.Schema({
     type: [String],
     required: true
   },
-  bookingDate: {
+  startDate: {
     type: Date,
     required: true
   },
-  timeSlot: {
-    type: String, // e.g. "12:00 PM - 2:00 PM"
-    required: true
+  endDate:{
+    type:Date,
+    required:true
   },
+  
   totalPrice: {
     type: Number,
     required: true

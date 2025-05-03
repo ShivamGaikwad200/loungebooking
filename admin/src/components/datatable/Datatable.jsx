@@ -13,8 +13,26 @@ const Datatable = ({ columns }) => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/${path}/${id}`);
-      setList((prevList) => prevList.filter((item) => item._id !== id));
+      if (path === "bookings") {
+        try {
+          await axios.put(`/${path}/${id}/status`, { status: "Rejected" });
+          setList((prevList) =>
+            prevList.map((item) =>
+              item._id === id ? { ...item, status: "Rejected" } : item
+            )
+          );
+        } catch (err) {
+          console.error("Reject error:", err);
+        }
+      } else {
+        try {
+          await axios.delete(`/${path}/${id}`);
+          setList((prevList) => prevList.filter((item) => item._id !== id));
+        } catch (err) {
+          console.error("Delete error:", err);
+        }
+      }
+
     } catch (err) {
       console.error("Delete error:", err);
     }
@@ -22,13 +40,23 @@ const Datatable = ({ columns }) => {
 
   const handleApprove = async (id) => {
     try {
-      // Make the PATCH or PUT request to update status
-      const res = await axios.put(`/${path}/${id}/status`, { status: "Payment pending" });
-
-      // Update the local list state
+      const currentItem = list.find(item => item._id === id);
+      const currentStatus = currentItem?.status;
+  
+      let newStatus = "";
+      if (currentStatus === "pending") {
+        newStatus = "Payment pending";
+      } else if (currentStatus === "Payment pending") {
+        newStatus = "Booking Done";
+      } else {
+        return; // Already done
+      }
+  
+      await axios.put(`/${path}/${id}/status`, { status: newStatus });
+  
       setList((prevList) =>
         prevList.map((item) =>
-          item._id === id ? { ...item, status: "Payment pending" } : item
+          item._id === id ? { ...item, status: newStatus } : item
         )
       );
     } catch (err) {
@@ -36,50 +64,62 @@ const Datatable = ({ columns }) => {
     }
   };
   
+  
 
   useEffect(() => {
-    setList(data);
-  }, [data]);
-
+    if (path === "bookings") {
+      setList(data.filter((item) => item.status !== "Rejected"));
+    } else {
+      setList(data);
+    }
+  }, [data, path]);
+  
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
       width: 220,
       renderCell: (params) => {
-        // Special case for bookings
         if (path === "bookings") {
+          const status = params.row.status;
+      
+          let buttonLabel = "";
+          if (status === "pending") {
+            buttonLabel = "Approve";
+          } else if (status === "Payment pending") {
+            buttonLabel = "Approve Payment";
+          } else if (status === "Booking Done") {
+            buttonLabel = "Booking Done";
+          }
+      
           return (
             <div className="cellAction">
-            {params.row.status === "Payment pending" ? (
-              <div className="viewButton">Payment Approve</div>
-            ) : (
+              {status !== "Booking Done" ? (
+                <div
+                  className="viewButton"
+                  onClick={() => handleApprove(params.row._id)}
+                >
+                  {buttonLabel}
+                </div>
+              ) : (
+                <div className="viewButton">
+                  {buttonLabel}
+                </div>
+              )}
+      
               <div
-                className="viewButton"
-                onClick={() => handleApprove(params.row._id)}
+                className="deleteButton"
+                onClick={() => handleDelete(params.row._id)}
               >
-                Approve
+                Reject
               </div>
-            )}
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row._id)}
-            >
-              Delete
             </div>
-          </div>
           );
         }
-  
-        // Default for other resources
+      
+        // Default delete for other paths
         return (
           <div className="cellAction">
-            {/* <Link
-              to={`/${path}/${params.row._id}`}
-              style={{ textDecoration: "none" }}
-            >
-              <div className="viewButton">View</div>
-            </Link> */}
             <div
               className="deleteButton"
               onClick={() => handleDelete(params.row._id)}
@@ -88,7 +128,8 @@ const Datatable = ({ columns }) => {
             </div>
           </div>
         );
-      },
+      }
+      
     },
   ];
 

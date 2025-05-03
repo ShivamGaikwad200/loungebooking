@@ -15,7 +15,7 @@ export const register=async (req,res,next)=>{
         })
         
         await newUser.save()
-        res.status(200).send("user has ben created")
+        res.status(200).send("User has been created");
 
     }
     catch(error){
@@ -31,7 +31,7 @@ export const login=async (req,res,next)=>{
         
         const isPasswordCorrect =await bcrypt.compare(req.body.password, user.password)
         if(!isPasswordCorrect){
-            return next(createError(404,'Incorrect Password or Username'))
+            return next(createError(401,'Incorrect Password or Username'))
             
         }
         const  token =jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT_S);
