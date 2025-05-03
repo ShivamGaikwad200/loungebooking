@@ -2,9 +2,28 @@ import Booking from "../models/Booking.js";
 
 // Create a new booking
 export const createBooking = async (req, res, next) => {
-  const newBooking = new Booking(req.body);
+  const { loungeId, startDate, endDate } = req.body;
 
   try {
+    // Check for overlapping bookings in the same lounge
+    const existingBooking = await Booking.findOne({
+      loungeId,
+      $or: [
+        {
+          startDate: { $lte: new Date(endDate) },
+          endDate: { $gte: new Date(startDate) },
+        },
+      ],
+      status: { $ne: "Rejected" } // Optional: ignore rejected bookings
+    });
+
+    if (existingBooking) {
+      return res.status(400).json({
+        message: "This lounge is already booked during the selected dates.",
+      });
+    }
+
+    const newBooking = new Booking(req.body);
     const savedBooking = await newBooking.save();
     res.status(201).json(savedBooking);
   } catch (err) {

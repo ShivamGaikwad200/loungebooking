@@ -7,6 +7,7 @@ import Login from "./pages/login/Login";
 import LoungeList from "./pages/loungeList/LoungeList";
 import BookingPage from "./pages/booking/BookingPage";
 import MyBookings from "./pages/mybookings/MyBooking";
+import Register from "./pages/registeration/Register.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/lounges/:id" element={<Lounge />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Register/>}/>
         <Route path="/my-bookings" element={<MyBookings />} />
       </Routes>
     </BrowserRouter>

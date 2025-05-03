@@ -22,7 +22,7 @@ const Lounge = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const { data, loading, error } = useFetch(`/lounges/${id}`);
-  console.log(data);
+  // console.log(data);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const { dates, options } = useContext(SearchContext);

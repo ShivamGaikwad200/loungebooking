@@ -36,9 +36,16 @@ const MyBookings = () => {
         ) : (
           <div className="myBookingsList">
             {bookings.map((booking) => (
-              <div className="myBookingCard" key={booking._id}>
+              <div className="myBookingCard" key={booking._id}
+              style={{
+                ...(booking.status === "Rejected" && { backgroundColor: "#ffcccc" }),
+                ...(booking.status === "Booking Done" && { backgroundColor: "#4caf50" }),
+              }}
+              >
                 {/* Status badge */}
-                <div className="statusBadge">
+                <div className="statusBadge"
+                  style={booking.status === "Rejected" ? { backgroundColor: "Red" } : {}}
+                  >
                   <p><strong>Status:</strong> {booking.status}</p>
                   {/* Payment pending image */}
                 {booking.status === "Payment pending" && (
