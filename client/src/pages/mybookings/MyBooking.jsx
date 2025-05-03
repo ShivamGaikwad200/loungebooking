@@ -61,7 +61,7 @@ const MyBookings = () => {
                 </div>
 
                 <h3>{booking.occasion}</h3>
-                <p><strong>Date:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
+                <p><strong>Date:</strong> {new Date(booking.startDate).toLocaleDateString()}-{new Date(booking.endDate).toLocaleDateString()}</p>
                 <p><strong>Time Slot:</strong> {booking.timeSlot}</p>
                 <p><strong>Services:</strong> {booking.services.join(", ")}</p>
                 <p><strong>Generator Backup:</strong> {booking.generatorBackup}</p>

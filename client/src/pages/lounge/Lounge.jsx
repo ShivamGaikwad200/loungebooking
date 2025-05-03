@@ -55,10 +55,12 @@ const Lounge = () => {
 
   const handleClick = () => {
     if (user) {
+      console.log("User is logged in:", user);
+      console.log("Lounge ID:", id);
       navigate("/booking", {
         state: {
           loungeId: id,
-          totalPrice: days * (data?.cheapestPrice || 0) * (options?.room || 1),
+          totalPrice: days * (data?.cost || 0) * (options?.room || 1),
         },
       });
     } else {

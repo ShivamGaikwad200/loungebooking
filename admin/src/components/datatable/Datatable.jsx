@@ -10,6 +10,8 @@ const Datatable = ({ columns }) => {
   const path = location.pathname.split("/")[1];
   const [list, setList] = useState([]);
   const { data, loading, error } = useFetch(`/${path}`);
+  const lounge = useFetch(`/lounges`);
+
 
   const handleDelete = async (id) => {
     try {
@@ -68,11 +70,27 @@ const Datatable = ({ columns }) => {
 
   useEffect(() => {
     if (path === "bookings") {
-      setList(data.filter((item) => item.status !== "Rejected"));
+      const filteredData = data.filter((item) => item.status !== "Rejected");
+      
+      if (lounge.data && lounge.data.length > 0) {
+        const updatedData = filteredData.map(item => {
+          if (item.loungeId) {
+            const loungeItem = lounge.data.find(l => l._id === item.loungeId);
+            return {
+              ...item,
+              loungeName: loungeItem ? loungeItem.name : "Unknown Lounge"
+            };
+          }
+          return item;
+        });
+        setList(updatedData);
+      } else {
+        setList(filteredData);
+      }
     } else {
       setList(data);
     }
-  }, [data, path]);
+  }, [data, path, lounge.data]);
   
   const actionColumn = [
     {
@@ -81,8 +99,14 @@ const Datatable = ({ columns }) => {
       width: 220,
       renderCell: (params) => {
         if (path === "bookings") {
-          const status = params.row.status;
-      
+            const status = params.row.status;
+            if (params.row.startDate) {
+            params.row.startDate = new Date(params.row.startDate).toLocaleDateString();
+            }
+            if (params.row.endDate) {
+            params.row.endDate = new Date(params.row.endDate).toLocaleDateString();
+            }
+           
           let buttonLabel = "";
           if (status === "pending") {
             buttonLabel = "Approve";

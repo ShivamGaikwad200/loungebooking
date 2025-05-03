@@ -66,6 +66,7 @@ const BookingPage = () => {
     try {
       const bookingData = {
         userId: user._id,
+        userName: user.username,
         loungeId,
         services,
         startDate,
@@ -114,7 +115,10 @@ const BookingPage = () => {
             <label>Booking Start Date:</label>
             <DatePicker
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={(date) => {
+                setStartDate(date);
+                setEndDate(null);
+              }}
               filterDate={(date) => !isDateBlocked(date)} // Disable dates in bookedDates array
               selectsStart
               startDate={startDate}
@@ -200,7 +204,12 @@ const BookingPage = () => {
             </select>
           </div>
 
-          <h2>Total Price: ${totalPrice}</h2>
+          <h2>
+            Total Price: $
+            {startDate && endDate
+              ? Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) * totalPrice
+              : 0}
+          </h2>
 
           <button type="submit" className="submitBookingBtn">Confirm Booking</button>
         </form>

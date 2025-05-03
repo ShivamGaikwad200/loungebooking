@@ -9,7 +9,7 @@ export const userColumns = [
         <div className="cellWithImg">
           <img 
             className="cellImg" 
-            src={params.row?.img || "https://i.ibb.co/MBtjqXQ/no-avatar.gif"} 
+            src={"https://i.ibb.co/MBtjqXQ/no-avatar.gif"} 
             alt="avatar" 
           />
           <span>{params.row?.username || "No Name"}</span>
@@ -118,7 +118,10 @@ export const loungeColumns = [
 ];
 
 export const bookingColumns = [
+  { field: "loungeName", headerName: "Lounge Name", width: 250 },
   { field: "userId", headerName: "User ID", width: 250 },
+  { field: "userName", headerName: "User Name", width: 250 },
+
   // {
   //   field: "user",
   //   headerName: "User",
@@ -136,14 +139,18 @@ export const bookingColumns = [
   //     );
   //   },
   // },
+  // {
+  //   field: "loungeId",
+  //   headerName: "Lounge ID",
+  //   width: 200,
+  // },
   {
-    field: "loungeId",
-    headerName: "Lounge ID",
+    field: "startDate",
+    headerName: "From",
     width: 200,
-  },
-  {
-    field: "bookingDate",
-    headerName: "Date",
+  },{
+    field: "endDate",
+    headerName: "To",
     width: 200,
   },
   // {
