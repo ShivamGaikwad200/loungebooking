@@ -9,14 +9,15 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { isWithinInterval } from "date-fns";
 import { eachDayOfInterval } from "date-fns";
+import { use } from "react";
 
 const BookingPage = () => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const loungeId = location.state?.loungeId;
-  const totalPrice = location.state?.totalPrice;
-
+  const loungePrice = location.state?.totalPrice;
+const [totalPrice, setTotalPrice] = useState(loungePrice || 0);
   const [services, setServices] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -71,7 +72,7 @@ const BookingPage = () => {
         services,
         startDate,
         endDate,
-        totalPrice,
+        totalPrice : totalPrice,
         occasion,
         generatorBackup,
         additionalFurniture,
@@ -104,6 +105,13 @@ const BookingPage = () => {
       setServices([...services, service]);
     }
   };
+  useEffect(() => {
+    if (startDate && endDate) {
+      const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      const totalPrice = totalDays * loungePrice; // Assuming $100 per day
+      setTotalPrice(totalPrice);
+    }
+  }, [startDate, endDate]);
 
   return (
     <div>
@@ -206,9 +214,7 @@ const BookingPage = () => {
 
           <h2>
             Total Price: $
-            {startDate && endDate
-              ? Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) * totalPrice
-              : 0}
+            {totalPrice}
           </h2>
 
           <button type="submit" className="submitBookingBtn">Confirm Booking</button>

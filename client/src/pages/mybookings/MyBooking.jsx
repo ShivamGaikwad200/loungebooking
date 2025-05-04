@@ -4,17 +4,25 @@ import Footer from "../../components/footer/Footer";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import useFetch from "../../hooks/useFetch";
 
 const MyBookings = () => {
   const { user } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+   const lounge = useFetch(`/lounges`);
+   console.log(lounge.data);
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         const res = await axios.get(`/bookings/user/${user._id}`);
-        setBookings(res.data);
+        console.log("Bookings data:", res.data); 
+        const bookingsWithLoungeNames = res.data.map((booking) => {
+          const loungeName = lounge.data.find((l) => l._id === booking.loungeId)?.name || "Unknown Lounge";
+          return { ...booking, loungeName };
+        });
+        setBookings(bookingsWithLoungeNames);
       } catch (err) {
         console.error("Failed to fetch bookings", err);
       }
@@ -61,6 +69,7 @@ const MyBookings = () => {
                 </div>
 
                 <h3>{booking.occasion}</h3>
+                <p><strong>Lounge Name:</strong> {booking.loungeName}</p>
                 <p><strong>Date:</strong> {new Date(booking.startDate).toLocaleDateString()}-{new Date(booking.endDate).toLocaleDateString()}</p>
                 <p><strong>Time Slot:</strong> {booking.timeSlot}</p>
                 <p><strong>Services:</strong> {booking.services.join(", ")}</p>
