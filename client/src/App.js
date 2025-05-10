@@ -14,14 +14,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home/>}/>
-        <Route path="/hotels" element={<List/>}/>
+        {/* <Route path="/hotels" element={<List/>}/> */}
         <Route path="/lounges" element={<LoungeList/>}/>
-        <Route path="/hotels/:id" element={<Hotel/>}/>
+        {/* <Route path="/hotels/:id" element={<Hotel/>}/> */}
         <Route path="/lounges/:id" element={<Lounge />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
-        <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/my-bookings" element={<MyBookings />}/>
       </Routes>
     </BrowserRouter>
   );

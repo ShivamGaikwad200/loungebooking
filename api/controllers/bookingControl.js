@@ -8,12 +8,15 @@ export const createBooking = async (req, res, next) => {
     // Check for overlapping bookings in the same lounge
     const existingBooking = await Booking.findOne({
       loungeId,
-      $or: [
-        {
-          startDate: { $lte: new Date(endDate) },
-          endDate: { $gte: new Date(startDate) },
-        },
-      ],
+      // $or: [
+      //   {
+      //     startDate: { $lte: new Date(endDate) },
+      //     endDate: { $gte: new Date(startDate) },
+      //   },
+      // ],
+      startDate: { $lte: new Date(endDate) },
+      endDate: { $gte: new Date(startDate) },
+
       status: { $ne: "Rejected" } // Optional: ignore rejected bookings
     });
 
@@ -90,6 +93,31 @@ export const deleteBooking = async (req, res, next) => {
   try {
     await Booking.findByIdAndDelete(req.params.id);
     res.status(200).json("Booking deleted successfully");
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getLoungeBooking=async(req,res,next)=>{
+  try {
+    const bookings = await Booking.find({ loungeId: req.params.loungeId });
+
+    const bookedRanges = bookings.map((booking) => ({
+      start: booking.startDate,
+      end: booking.endDate,
+    }));
+
+    res.status(200).json(bookedRanges);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch booked dates" });
+  }
+};
+
+// booking count
+export const getBookingCount = async (req, res, next) => {
+  try {
+    const count = await Booking.countDocuments();
+    res.status(200).json({ count });
   } catch (err) {
     next(err);
   }

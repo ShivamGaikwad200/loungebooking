@@ -11,8 +11,8 @@ import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/AuthContext";
 import { userColumns,hotelColumns,loungeColumns,bookingColumns } from "./datatablesource";
 // import { hotelColumns, roomColumns, userColumns } from "./datatablesource";
-import NewHotel from "./pages/newHotel/NewHotel";
-import NewRoom from "./pages/newRoom/NewRoom";
+// import NewHotel from "./pages/newHotel/NewHotel";
+// import NewRoom from "./pages/newRoom/NewRoom";
 import NewBooking from "./pages/newBookings/NewBookings"; 
 import NewLounge from "./pages/newLounge/NewLounge";
 
@@ -70,7 +70,7 @@ function App() {
             />
           </Route>
 
-          <Route path="hotels">
+          {/* <Route path="hotels">
             <Route
               index
               element={
@@ -95,7 +95,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-          </Route>
+          </Route> */}
 
           <Route path="lounges">
             <Route
@@ -124,7 +124,7 @@ function App() {
             />
           </Route>
 
-          <Route path="rooms">
+          {/* <Route path="rooms">
             <Route
               index
               element={
@@ -149,7 +149,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-          </Route>
+          </Route> */}
 
           <Route path="bookings">
               <Route

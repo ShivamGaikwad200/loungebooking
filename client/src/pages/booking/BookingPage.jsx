@@ -32,6 +32,7 @@ const [totalPrice, setTotalPrice] = useState(loungePrice || 0);
   useEffect(() => {
     const fetchBookedDates = async () => {
       try {
+        // console.log(loungeId);
         const res = await axios.get(`/bookings/booked-dates/${loungeId}`);
         const ranges = res.data;
         const allBookedDates = [];
@@ -45,6 +46,9 @@ const [totalPrice, setTotalPrice] = useState(loungePrice || 0);
         });
 
         setBookedDates(allBookedDates);
+        // console.log("dates", allBookedDates);
+        // console.log("Submitting booking:", bookingData);
+
       } catch (err) {
         console.error("Error fetching booked dates:", err);
       }
