@@ -112,3 +112,13 @@ export const getLoungeBooking=async(req,res,next)=>{
     res.status(500).json({ message: "Failed to fetch booked dates" });
   }
 };
+
+// booking count
+export const getBookingCount = async (req, res, next) => {
+  try {
+    const count = await Booking.countDocuments();
+    res.status(200).json({ count });
+  } catch (err) {
+    next(err);
+  }
+};

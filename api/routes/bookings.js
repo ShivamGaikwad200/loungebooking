@@ -7,9 +7,10 @@ import {
   getBookingsByLounge,
   getAllBookings,
   deleteBooking,
-  getLoungeBooking
+  getLoungeBooking,
+  getBookingCount
 } from "../controllers/bookingControl.js";
-// import Booking from "../models/Booking.js"; 
+import Booking from "../models/Booking.js"; 
 
 import { verifyUser, verifyAdmin } from "../utils/verifyToken.js";
 
@@ -21,6 +22,9 @@ router.post("/", verifyUser, createBooking);
 // Update booking status (admin only)
 router.put("/:id/status", verifyAdmin, updateBookingStatus);
 
+//count
+router.get("/count", getBookingCount);
+
 // Get a specific booking (user or admin)
 router.get("/:id", verifyUser, getBooking);
 
@@ -31,26 +35,11 @@ router.get("/user/:userId", verifyUser, getBookingsByUser);
 router.get("/lounge/:loungeId", verifyAdmin, getBookingsByLounge);
 
 // Get all bookings (admin only)
-router.get("/", verifyAdmin, getAllBookings);
+router.get("/", getAllBookings);
 
 // Delete a booking (user themselves or admin)
 router.delete("/:id", verifyUser, deleteBooking);
 
 router.get("/booked-dates/:loungeId", getLoungeBooking); 
-
-// router.get("/booked-dates/:loungeId", async (req, res) => {
-//   try {
-//     const bookings = await Booking.find({ loungeId: req.params.loungeId });
-
-//     const bookedRanges = bookings.map((booking) => ({
-//       start: booking.startDate,
-//       end: booking.endDate,
-//     }));
-
-//     res.status(200).json(bookedRanges);
-//   } catch (err) {
-//     res.status(500).json({ message: "Failed to fetch booked dates" });
-//   }
-// });
 
 export default router;

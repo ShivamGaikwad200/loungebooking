@@ -1,18 +1,25 @@
 import "./widget.scss";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+// import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+// import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
+// import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import { Link } from "react-router-dom";
+import { useState,useEffect } from "react";
+import axios from 'axios'
+import useFetch from "../../hooks/useFetch";
 
 const Widget = ({ type }) => {
+
   let data;
 
-  //temporary
-  const amount = 100;
-  // const diff = 20;
+  
+  const { data: fetchedData } = useFetch(
+    type === "user" ? "/users/count" : type === "bookings" ? "/bookings/count" : ""
+  );
+  const amount = fetchedData?.count || 0;
 
+  
   switch (type) {
     case "user":
       data = {

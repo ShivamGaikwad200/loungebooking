@@ -18,10 +18,6 @@ const List = () => {
   const columns =
     path === "users"
       ? userColumns
-      : path === "hotels"
-      ? hotelColumns
-      : path === "rooms"
-      ? roomColumns
       : path === "lounges"
       ? loungeColumns
       : path === "bookings"

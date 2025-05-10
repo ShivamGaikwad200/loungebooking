@@ -1,7 +1,8 @@
 import express from "express"
 
-import {updateUser,deleteUser, getUser, getAll } from "../controllers/userControl.js";
+import {updateUser,deleteUser, getUser, getAll,getUserCount } from "../controllers/userControl.js";
 import { verifyToken,verifyUser,verifyAdmin } from "../utils/verifyToken.js";
+import User from "../models/User.js";
 
 const router=express.Router();
 
@@ -27,10 +28,14 @@ router.put("/:id",verifyUser, updateUser)
 //Delete
 router.delete("/:id",verifyUser, deleteUser)
 
+//Get count
+router.get("/count", getUserCount);
+
 //Get
 router.get("/:id",verifyUser,getUser)
 
 //Get All
-router.get("/",verifyAdmin, getAll);
+router.get("/", getAll);
+
 
 export default router
